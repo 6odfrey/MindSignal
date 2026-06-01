@@ -13,6 +13,7 @@ import ProfessionalsScreen from '../screens/professionals/ProfessionalsScreen';
 import ConversationsScreen from '../screens/messages/ConversationsScreen';
 import ChatScreen from '../screens/messages/ChatScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
+import RemindersScreen from '../screens/settings/RemindersScreen';
 
 export type AuthStackParams = {
   Login: undefined;
@@ -29,6 +30,7 @@ export type TabParams = {
 export type LogMoodStackParams = {
   HomeTabs: undefined;
   LogMood: undefined;
+  Reminders: undefined;
 };
 
 export type MessagesStackParams = {
@@ -124,6 +126,18 @@ function AppNavigator() {
         options={{
           headerShown: true,
           title: 'Log mood',
+          headerBackTitle: 'Back',
+          headerTintColor: '#5B2D8E',
+          headerStyle: { backgroundColor: '#F7F3FF' },
+          headerShadowVisible: false,
+        }}
+      />
+      <RootStack.Screen
+        name="Reminders"
+        component={RemindersScreen}
+        options={{
+          headerShown: true,
+          title: 'Reminders',
           headerBackTitle: 'Back',
           headerTintColor: '#5B2D8E',
           headerStyle: { backgroundColor: '#F7F3FF' },

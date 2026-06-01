@@ -5,11 +5,15 @@ import {
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { api } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
-import type { TabParams } from '../../navigation';
+import { registerForPushNotifications } from '../../utils/notifications';
+import type { TabParams, LogMoodStackParams } from '../../navigation';
 
 type Props = BottomTabScreenProps<TabParams, 'Profile'>;
+type RootNav = NativeStackNavigationProp<LogMoodStackParams>;
 
 interface UserProfile {
   id: string;
@@ -23,6 +27,7 @@ interface UserProfile {
 
 export default function ProfileScreen(_props: Props) {
   const { logout } = useAuth();
+  const rootNav = useNavigation<RootNav>();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -39,7 +44,10 @@ export default function ProfileScreen(_props: Props) {
     }
   }
 
-  useFocusEffect(useCallback(() => { load(); }, []));
+  useFocusEffect(useCallback(() => {
+    load();
+    registerForPushNotifications();
+  }, []));
 
   function onRefresh() {
     setRefreshing(true);
@@ -85,6 +93,13 @@ export default function ProfileScreen(_props: Props) {
           <Text style={styles.rowLabel}>Timezone</Text>
           <Text style={styles.rowValue}>{profile?.profile?.timezone ?? 'UTC'}</Text>
         </View>
+        <TouchableOpacity
+          style={[styles.row, styles.rowTappable]}
+          onPress={() => rootNav.navigate('Reminders')}
+        >
+          <Text style={styles.rowLabel}>Reminders & notifications</Text>
+          <Text style={styles.rowChevron}>›</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.section}>
@@ -121,8 +136,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
     backgroundColor: '#fff', borderRadius: 12, padding: 14,
   },
+  rowTappable: { marginTop: 8 },
   rowLabel: { fontSize: 15, color: '#1a1a1a' },
   rowValue: { fontSize: 14, color: '#888' },
+  rowChevron: { fontSize: 20, color: '#ccc' },
   crisisCard: {
     backgroundColor: '#fff', borderRadius: 12, padding: 16, gap: 6,
     borderLeftWidth: 3, borderLeftColor: '#5B2D8E',

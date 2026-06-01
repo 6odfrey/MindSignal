@@ -96,6 +96,29 @@ export interface ListProfessionalsQuery {
   offset?: string;
 }
 
+export interface NotificationPreferences {
+  id: string;
+  user_id: string;
+  mood_reminder: boolean;
+  reminder_time: string;
+  crisis_alerts: boolean;
+  message_alerts: boolean;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface UpdateNotificationPrefsBody {
+  mood_reminder?: boolean;
+  reminder_time?: string;
+  crisis_alerts?: boolean;
+  message_alerts?: boolean;
+}
+
+export interface RegisterTokenBody {
+  token: string;
+  platform: 'ios' | 'android' | 'web';
+}
+
 export type MessageSender = 'user' | 'professional';
 
 export interface Conversation {
