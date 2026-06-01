@@ -6,6 +6,8 @@ import { connectDB } from './config/database';
 import { errorHandler } from './middleware/errorHandler';
 import authRoutes from './routes/auth';
 import userRoutes from './routes/users';
+import moodRoutes from './routes/moods';
+import crisisRoutes from './routes/crisis';
 
 const app = express();
 
@@ -24,6 +26,8 @@ app.get('/health', (_req, res) => {
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/moods', moodRoutes);
+app.use('/api/crisis', crisisRoutes);
 
 // 404
 app.use((_req, res) => {

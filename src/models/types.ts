@@ -22,6 +22,37 @@ export interface UserWithProfile extends Omit<User, 'password_hash'> {
   profile: UserProfile | null;
 }
 
+export interface Mood {
+  id: string;
+  user_id: string;
+  score: number;
+  note: string | null;
+  tags: string[];
+  crisis_flagged: boolean;
+  created_at: Date;
+}
+
+export interface CrisisResource {
+  id: string;
+  name: string;
+  description: string | null;
+  phone: string | null;
+  text_number: string | null;
+  url: string | null;
+  available_hours: string;
+  created_at: Date;
+}
+
+export interface MoodAnalytics {
+  total_entries: number;
+  average_score: number;
+  highest_score: number;
+  lowest_score: number;
+  crisis_flags: number;
+  trend: 'improving' | 'declining' | 'stable';
+  daily_averages: { date: string; avg_score: number }[];
+}
+
 export interface AuthTokenPayload {
   userId: string;
   email: string;
@@ -44,7 +75,12 @@ export interface UpdateProfileBody {
   timezone?: string;
 }
 
-// Extends Express Request with authenticated user
+export interface CreateMoodBody {
+  score: number;
+  note?: string;
+  tags?: string[];
+}
+
 declare global {
   namespace Express {
     interface Request {
