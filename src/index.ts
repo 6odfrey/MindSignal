@@ -8,6 +8,7 @@ import authRoutes from './routes/auth';
 import userRoutes from './routes/users';
 import moodRoutes from './routes/moods';
 import crisisRoutes from './routes/crisis';
+import professionalRoutes from './routes/professionals';
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/moods', moodRoutes);
 app.use('/api/crisis', crisisRoutes);
+app.use('/api/professionals', professionalRoutes);
 
 // 404
 app.use((_req, res) => {

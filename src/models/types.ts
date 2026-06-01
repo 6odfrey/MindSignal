@@ -53,6 +53,49 @@ export interface MoodAnalytics {
   daily_averages: { date: string; avg_score: number }[];
 }
 
+export type ProfessionType = 'therapist' | 'counsellor' | 'psychologist' | 'psychiatrist' | 'cbt_therapist' | 'life_coach';
+export type DeliveryMethod = 'online' | 'in_person' | 'both';
+
+export interface Professional {
+  id: string;
+  name: string;
+  bio: string | null;
+  profession_type: ProfessionType;
+  specializations: string[];
+  delivery_method: DeliveryMethod;
+  location: string | null;
+  nhs_funded: boolean;
+  languages: string[];
+  accepting_clients: boolean;
+  booking_url: string | null;
+  contact_email: string | null;
+  is_active: boolean;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface ProfessionalWithSaved extends Professional {
+  is_saved: boolean;
+}
+
+export interface SavedProfessional {
+  id: string;
+  user_id: string;
+  professional_id: string;
+  created_at: Date;
+}
+
+export interface ListProfessionalsQuery {
+  specialization?: string;
+  delivery_method?: DeliveryMethod;
+  location?: string;
+  nhs_funded?: string;
+  profession_type?: ProfessionType;
+  accepting_only?: string;
+  limit?: string;
+  offset?: string;
+}
+
 export interface AuthTokenPayload {
   userId: string;
   email: string;
