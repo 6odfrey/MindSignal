@@ -1,14 +1,17 @@
 import React, { useCallback, useState } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
-  TextInput, ActivityIndicator, RefreshControl,
+  TextInput, ActivityIndicator, RefreshControl, Alert,
 } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { professionalsApi, type Professional } from '../../api/professionals';
-import type { TabParams } from '../../navigation';
+import { conversationsApi } from '../../api/conversations';
+import type { TabParams, MessagesStackParams } from '../../navigation';
 
 type Props = BottomTabScreenProps<TabParams, 'Professionals'>;
+type MessagesNav = NativeStackNavigationProp<MessagesStackParams>;
 
 const DELIVERY_FILTERS = [
   { label: 'All', value: undefined },
@@ -17,7 +20,8 @@ const DELIVERY_FILTERS = [
   { label: 'Both', value: 'both' },
 ] as const;
 
-export default function ProfessionalsScreen({ navigation }: Props) {
+export default function ProfessionalsScreen({ navigation: _navigation }: Props) {
+  const messagesNav = useNavigation<MessagesNav>();
   const [professionals, setProfessionals] = useState<Professional[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -48,6 +52,18 @@ export default function ProfessionalsScreen({ navigation }: Props) {
   function onRefresh() {
     setRefreshing(true);
     load();
+  }
+
+  async function handleMessage(pro: Professional) {
+    try {
+      const conv = await conversationsApi.start(pro.id);
+      messagesNav.navigate('Chat', {
+        conversationId: conv.id,
+        professionalName: pro.name,
+      });
+    } catch {
+      Alert.alert('Error', 'Could not start conversation. Please try again.');
+    }
   }
 
   function toggleSave(pro: Professional) {
@@ -89,9 +105,14 @@ export default function ProfessionalsScreen({ navigation }: Props) {
           {!item.accepting_clients && <Text style={styles.closedBadge}> Not accepting</Text>}
         </View>
 
-        {item.booking_url && (
-          <Text style={styles.bookingNote}>Booking available</Text>
-        )}
+        <View style={styles.actionRow}>
+          {item.booking_url && (
+            <Text style={styles.bookingNote}>Booking available</Text>
+          )}
+          <TouchableOpacity style={styles.msgBtn} onPress={() => handleMessage(item)}>
+            <Text style={styles.msgBtnText}>Message</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -192,6 +213,12 @@ const styles = StyleSheet.create({
   meta: { fontSize: 12, color: '#888' },
   nhsBadge: { fontSize: 11, color: '#fff', backgroundColor: '#005EB8', borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2, overflow: 'hidden', fontWeight: '600' },
   closedBadge: { fontSize: 11, color: '#888', backgroundColor: '#eee', borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2, overflow: 'hidden' },
-  bookingNote: { fontSize: 12, color: '#5B2D8E', marginTop: 8, fontWeight: '500' },
+  actionRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 },
+  bookingNote: { fontSize: 12, color: '#5B2D8E', fontWeight: '500' },
+  msgBtn: {
+    backgroundColor: '#5B2D8E', borderRadius: 10,
+    paddingHorizontal: 16, paddingVertical: 7,
+  },
+  msgBtnText: { color: '#fff', fontSize: 13, fontWeight: '600' },
   empty: { textAlign: 'center', color: '#bbb', marginTop: 40, fontSize: 14 },
 });

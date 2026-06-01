@@ -9,6 +9,7 @@ import userRoutes from './routes/users';
 import moodRoutes from './routes/moods';
 import crisisRoutes from './routes/crisis';
 import professionalRoutes from './routes/professionals';
+import conversationRoutes from './routes/conversations';
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/moods', moodRoutes);
 app.use('/api/crisis', crisisRoutes);
 app.use('/api/professionals', professionalRoutes);
+app.use('/api/conversations', conversationRoutes);
 
 // 404
 app.use((_req, res) => {

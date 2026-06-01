@@ -96,6 +96,36 @@ export interface ListProfessionalsQuery {
   offset?: string;
 }
 
+export type MessageSender = 'user' | 'professional';
+
+export interface Conversation {
+  id: string;
+  user_id: string;
+  professional_id: string;
+  last_message_at: Date | null;
+  created_at: Date;
+}
+
+export interface ConversationWithDetails extends Conversation {
+  professional_name: string;
+  professional_type: string;
+  unread_count: number;
+  last_message: string | null;
+}
+
+export interface Message {
+  id: string;
+  conversation_id: string;
+  sender_type: MessageSender;
+  content: string;
+  read_at: Date | null;
+  created_at: Date;
+}
+
+export interface SendMessageBody {
+  content: string;
+}
+
 export interface AuthTokenPayload {
   userId: string;
   email: string;

@@ -10,6 +10,8 @@ import RegisterScreen from '../screens/auth/RegisterScreen';
 import HomeScreen from '../screens/home/HomeScreen';
 import LogMoodScreen from '../screens/mood/LogMoodScreen';
 import ProfessionalsScreen from '../screens/professionals/ProfessionalsScreen';
+import ConversationsScreen from '../screens/messages/ConversationsScreen';
+import ChatScreen from '../screens/messages/ChatScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 
 export type AuthStackParams = {
@@ -20,6 +22,7 @@ export type AuthStackParams = {
 export type TabParams = {
   Home: undefined;
   Professionals: undefined;
+  Messages: undefined;
   Profile: undefined;
 };
 
@@ -28,12 +31,41 @@ export type LogMoodStackParams = {
   LogMood: undefined;
 };
 
+export type MessagesStackParams = {
+  ConversationList: undefined;
+  Chat: { conversationId: string; professionalName: string };
+};
+
 const AuthStack = createNativeStackNavigator<AuthStackParams>();
 const Tab = createBottomTabNavigator<TabParams>();
 const RootStack = createNativeStackNavigator<LogMoodStackParams>();
+const MessagesStack = createNativeStackNavigator<MessagesStackParams>();
 
 function TabIcon({ icon, focused }: { icon: string; focused: boolean }) {
   return <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.45 }}>{icon}</Text>;
+}
+
+function MessagesNavigator() {
+  return (
+    <MessagesStack.Navigator>
+      <MessagesStack.Screen
+        name="ConversationList"
+        component={ConversationsScreen}
+        options={{ headerShown: false }}
+      />
+      <MessagesStack.Screen
+        name="Chat"
+        component={ChatScreen}
+        options={({ route }) => ({
+          title: route.params.professionalName,
+          headerBackTitle: 'Back',
+          headerTintColor: '#5B2D8E',
+          headerStyle: { backgroundColor: '#F7F3FF' },
+          headerShadowVisible: false,
+        })}
+      />
+    </MessagesStack.Navigator>
+  );
 }
 
 function MainTabs() {
@@ -60,6 +92,14 @@ function MainTabs() {
         options={{
           tabBarIcon: ({ focused }) => <TabIcon icon="🧠" focused={focused} />,
           tabBarLabel: 'Find support',
+        }}
+      />
+      <Tab.Screen
+        name="Messages"
+        component={MessagesNavigator}
+        options={{
+          tabBarIcon: ({ focused }) => <TabIcon icon="💬" focused={focused} />,
+          tabBarLabel: 'Messages',
         }}
       />
       <Tab.Screen
